@@ -1,4 +1,7 @@
-﻿var validatable = (function($, _, b, s){
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var validatable = (function($, _, b, s){
     "use strict";
 
 

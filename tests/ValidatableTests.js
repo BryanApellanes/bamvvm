@@ -1,9 +1,12 @@
-﻿$(document).ready(function () {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+$(document).ready(function () {
 
     bam.activatePlugins();
 
     QUnit.test("should have required field", function(assert){
-        var testObj = $("#requiredTest").data("validatable")
+        var testObj = $("#requiredTest").data("validatable"),
             $field = $("#RequiredField");
         assert.ok(!_.isUndefined(testObj));
         $field.val("");

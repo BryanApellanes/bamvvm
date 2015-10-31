@@ -1,4 +1,7 @@
-﻿/*
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+/*
 
  * Copyright 2014, Bryan Apellanes
  * Available via the MIT or new BSD license.
@@ -8,143 +11,6 @@
 /* dao */
 var dao = (function ($, _) {
     "use strict";
-
-    function value(n, v, own) {
-        var listeners = [];
-
-        this.name = n;
-        this.value = v;
-        this.oldvalue = v;
-        this.owner = own;
-
-        this.get = function () {
-            return this.value;
-        };
-
-        this.set = function (v) {
-            this.oldvalue = this.value;
-            this.value = v;
-            if (listeners.length > 0 && this.oldvalue != this.value) {
-                for (var i = 0; i < listeners.length; i++) {
-                    listeners[i](this);
-                }
-            }
-        };
-
-        this.change = function (name, fn) {
-            if (_.isFunction(name) && _.isUndefined(fn)) {
-                fn = name;
-                name = this.name;
-            }
-            if (name == this.name) {
-                if (_.isFunction(fn)) {
-                    listeners.push(fn);
-                }
-            }
-        };
-    }
-
-    function observeArray(a) {
-        var result = [];
-        result.listeners = [];
-        result.toData = function () {
-            var dataArr = [];
-            _.each(this, function (d) {
-                dataArr.push(d.toData());
-            });
-            return dataArr;
-        };
-        result.toJson = function () {
-            return JSON.stringify(this.toData());
-        };
-
-        result.changeAny = function (name, fn) {
-            _.each(this, function (d) {
-                d.change(name, fn);
-            });
-        };
-
-        result.change = result.changeAny;
-
-        result.changeAt = function (i, p, fn) {
-            if (_.isUndefined(fn) && _.isFunction(p)) {
-                this[i].change(p);
-            } else {
-                this[i].change(p, fn);
-            }
-        };
-
-        if (!_.isArray(a)) {
-            result.push(observe(a));
-        } else {
-            _.each(a, function (o) {
-                result.push(observe(o));
-            });
-        }
-        return result;
-    }
-
-    function observe(o) {
-        if (_.isArray(o)) {
-            return observeArray(o);
-        }
-        var result = {};
-        result.listeners = [];
-        result.properties = [];
-        result.toData = function () {
-            var l = this.properties.length,
-                the = this,
-                result = {};
-
-            _.each(this.properties, function (prop) {
-                result[prop] = the[prop]();
-            });
-            return result;
-        };
-
-        result.toJson = function () {
-            return JSON.stringify(this.toData());
-        };
-
-        function accessor(pName, val) {
-            if (!_.isNull(val) && !_.isUndefined(val)) {
-                this[pName].value.set(val);
-            }
-            return this[pName].value;
-        }
-
-        for (var prop in o) {
-            if (!_.isFunction(o[prop])) {
-                var setVal = o[prop];
-
-                result[prop] = function f(val) {
-                    var p = f.value.name;
-                    return accessor.apply(result, [p, val]).value;
-                };
-
-                result[prop].value = new value(prop, setVal, result);
-
-                result[prop].toString = function ts() {
-                    return ts.value.value;
-                };
-
-                result.properties.push(prop);
-            }else{
-                result[prop] = o[prop];
-            }
-        }
-        result.change = function (pName, fn) {
-            if (_.isUndefined(fn) && _.isFunction(pName)) {
-                for (var i = 0; i < result.properties.length; i++) {
-                    var p = result.properties[i];
-                    result[p].value.change(p, pName); // pName is a function here
-                }
-            } else {
-                result[pName].value.change(pName, fn);
-            }
-        };
-        return result;
-    }
 
     var daoName = "",
         daoRoot = window.location.protocol + "//" + window.location.host + "/" + daoName,
@@ -206,11 +72,11 @@ var dao = (function ($, _) {
         return $.ajax(config).promise();
     }
 
-    function blast(ctrlr, actn, data, options){
+    function blast(connectionName, typeName, action, rawDao, options){
         var config = {
-            url: getRoot() + "qi/" + ctrlr + "/" + actn,
+            url: getRoot() + "dao/" + connectionName + "/" + action + "/" + typeName,
             dataType: "json",
-            data: JSON.stringify(data),
+            data: JSON.stringify(rawDao),
             global: false,
             type: "POST",
             contentType: "application/json; charset=utf-8"
@@ -265,8 +131,9 @@ var dao = (function ($, _) {
      * @param nameOrDao
      * @param idUndefOrDao
      */
-    function wrapper(nameOrDao, idUndefOrDao) {
+    function wrapper(nameOrDao, idUndefOrDao, cxName) {
         this.tableName = null;
+        this.cxName = cxName;
         this.Dao = null;
         this.loaded = false;
 
@@ -304,6 +171,7 @@ var dao = (function ($, _) {
                         success: function (res) {
                             if (res.Success) {
                                 self.Dao = res.Dao;
+                                self.cxName = res.CxName;
                                 self.loaded = true;
                                 def.resolve(self);
                             } else {
@@ -324,14 +192,14 @@ var dao = (function ($, _) {
     wrapper.prototype.where = function (qi, wrap) {
         var self = this,
             prom = $.Deferred(function () {
-                blast(self.tableName, "Where", qi, {
+                blast(qi.cxName, self.tableName, "Query", qi, {
                     success: function (r) {
                         if (r.Success) {
                             var results = r.Dao;
                             if (wrap) {
                                 var wrappedResults = [];
                                 $.each(r.Dao, function (i, v) {
-                                    wrappedResults.push(new wrapper(self.tableName, v));
+                                    wrappedResults.push(new wrapper(self.tableName, v, r.CxName));
                                 });
                                 results = wrappedResults;
                             }
@@ -351,12 +219,12 @@ var dao = (function ($, _) {
     wrapper.prototype.oneWhere = function (qi, wrap) {
         var self = this,
             prom = $.Deferred(function () {
-                blast(self.tableName, "OneWhere", qi, {
+                blast(self.cxName, self.tableName, "OneWhere", qi, {
                     success: function (r) {
                         if (r.Success) {
                             var val = r.Dao;
                             if (wrap) {
-                                val = new wrapper(self.tableName, r.Dao);
+                                val = new wrapper(self.tableName, r.Dao, r.CxName);
                             }
 
                             prom.resolve(val);
@@ -373,7 +241,8 @@ var dao = (function ($, _) {
     };
 
     wrapper.prototype.retrieve = function (opts) {
-        act(this.tableName, "Retrieve", { id: this.pk() }, opts);
+        var self = this;
+        blast(self.cxName, self.tableName, "Retrieve", self.pk(), opts);
     };
 
     wrapper.prototype.pk = function (val) {
@@ -403,17 +272,18 @@ var dao = (function ($, _) {
     wrapper.prototype.insert = function () {
         var self = this, // dao.wrapper
             prom = $.Deferred(function () {
-                blast(self.tableName, "Create", self.Dao, {
+                blast(self.cxName, self.tableName, "Create", self.Dao, {
                     success: function (r) {
                         if (r.Success) {
                             self.Dao = r.Dao;
+                            self.cxName = r.CxName;
                             prom.resolve(self);
                         } else {
                             prom.reject(r.Message);
                         }
                     },
                     error: function (x, s, e) {
-                        prom.reject(r);
+                        prom.reject(returnValue);
                     }
                 });
             });
@@ -423,17 +293,18 @@ var dao = (function ($, _) {
     wrapper.prototype.update = function () {
         var self = this, //dao.wrapper
             prom = $.Deferred(function () {
-                blast(self.tableName, "Update", self.Dao, {
+                blast(self.cxName, self.tableName, "Update", self.Dao, {
                     success: function (r) {
                         if (r.Success) {
                             self.Dao = r.Dao;
+                            self.cxName = r.CxName;
                             prom.resolve(self);
                         } else {
                             prom.reject(r.Message);
                         }
                     },
                     error: function (x, s, e) {
-                        prom.reject(r.Message);
+                        prom.reject(returnValue.Message);
                     }
                 })
             });
@@ -443,7 +314,7 @@ var dao = (function ($, _) {
     wrapper.prototype['delete'] = function () {
         var self = this,
             prom = $.Deferred(function () {
-                blast(self.tableName, "Delete", { id: self.pk() }, {
+                blast(self.cxName, self.tableName, "Delete", { id: self.pk() }, {
                     success: function (r) {
                         if (r.Success) {
                             self.Dao = null;
@@ -451,7 +322,7 @@ var dao = (function ($, _) {
                         }
                     },
                     error: function (x, s, e) {
-                        prom.reject(false, r.Message)
+                        prom.reject(false, returnValue.Message)
                     }
                 });
             });
@@ -488,6 +359,7 @@ var dao = (function ($, _) {
      */
     function collection(o, pt, pk, ft, fk) {
         this.loaded = false;
+        this.cxName = o.cxName;
         this.owner = o;  // the primary key table wrapper
         this.pt = pt; // the primary table name
         this.pk = pk; // the primary key name
@@ -564,7 +436,7 @@ var dao = (function ($, _) {
     collection.prototype.save = function (wrap) {
         var self = this,
             prom = $.Deferred(function () {
-                blast(self.ft, "Save", self.raw(), {
+                blast(self.cxName, self.ft, "SaveCollection", self.raw(), {
                     success: function (res) {
                         if (res.Success) {
                             self.values = [];
@@ -592,12 +464,11 @@ var dao = (function ($, _) {
         alert("sdo.js is not included");
     }
 
-    var r = {
+    var returnValue = {
         setCtx: setCtx,
         getCtx: getCtx,
         setRoot: setRoot,
         getRoot: getRoot,
-        value: value,
         collection: collection,
         getFks: getFks,
         wrapper: wrapper,
@@ -608,8 +479,6 @@ var dao = (function ($, _) {
         blast: blast,
         construct: construct,
         deleteDao: deleteDao,
-        observe: observe,
-        observeArray: observeArray,
         dataBind: function (selector, data) {
             alert("dataBinder not set");
         },
@@ -623,32 +492,32 @@ var dao = (function ($, _) {
     };
 
     if (sdo) {
-        r.sdo = sdo; // schema dot org
-        r.dataBinder = sdo;
-        r.dataBind = function (selector, data) {
+        returnValue.sdo = sdo; // schema dot org
+        returnValue.dataBinder = sdo;
+        returnValue.dataBind = function (selector, data) {
             this.dataBinder.dataBind(selector, data);
         }
     } else {
-        r.sdo = {
+        returnValue.sdo = {
             item: missing,
             items: missing
         };
     }
 
-    r.getItem = r.sdo.getItem;
-    r.getItems = r.sdo.getItems;
+    returnValue.getItem = returnValue.sdo.getItem;
+    returnValue.getItems = returnValue.sdo.getItems;
 
     if (qi !== undefined) {
-        r.qi = qi;
+        returnValue.qi = qi;
     } else {
-        r.qi = {
+        returnValue.qi = {
             from: missing,
             where: missing
         }
     }
 
-    _.mixin(r);
+    _.mixin(returnValue);
 
-    return r;
+    return returnValue;
 })(jQuery, _);
 /* dao */

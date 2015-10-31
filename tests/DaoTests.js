@@ -1,4 +1,8 @@
-﻿$(document).ready(function () {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+;
+$(document).ready(function () {
     "use strict";
     dao.setCtx("DaoRef");
     $("#inputsForTestTable").dataSet().dataSetPlugins();
@@ -24,14 +28,14 @@
     });
 
     QUnit.test("if id specified loaded should be false and Dao should be null", function(assert){
-        expect(2);
+        assert.expect(2);
         var d = new dao.wrapper("TestTable", 500);
         assert.ok(d.loaded == false, "loaded should be false");
         assert.ok(_.isNull(d.Dao), "Dao should be null");
     });
 
     QUnit.test("if object specified loaded should be true and Dao should be the object specified", function(assert){
-        expect(3);
+        assert.expect(3);
         var o = {Name: "TheMonkey"},
             d = new dao.wrapper(o);
         assert.ok(d.loaded == true, "loaded should be true");
@@ -40,24 +44,26 @@
     });
 
     QUnit.test("new dao.entity test", function (assert) {
-        expect(1);
+        assert.expect(1);
         var name = "dao.entity test",
             d = new dao.wrapper({ Name: name, Description: "description" });
         assert.equal(d.Dao.Name, name, "name should be " + name);
     });
 
     QUnit.test("name should get set", function (assert) {
-        expect(1);
+        assert.expect(1);
         var name = "Monkey";
         var test = new dao.DaoRef.ctors.TestTable(name);
         assert.equal(test.Dao.Name, "Monkey", "test.Dao.name equals Monkey");
     });
 
-    QUnit.asyncTest("testing jquery promises", function (assert){
-        expect(3);
+    QUnit.test("testing jquery promises", function (assert){
+        assert.expect(3);
+
         var thenCalled = false,
             firstCalled = false,
             andThenCalled = false,
+            start = assert.async(),
             firstFn = function(){
                 firstCalled = true;
             },
@@ -75,14 +81,15 @@
         })
     });
 
-    QUnit.asyncTest("should be able to save", function (assert) {
-        expect(7);
+    QUnit.test("should be able to save", function (assert) {
+        assert.expect(7);
         var name = "SaveMyMonkey";
         var test = new dao.DaoRef.ctors.TestTable(name);
+        var start = assert.async();
         assert.ok(!_.isNull(test.Dao), "Dao shouldn't be null");
         assert.ok(!_.isUndefined(test.Dao), "Dao shouldn't be undefined");
         assert.equal(test.tableName, "TestTable");
-        assert.equal(test.Dao.Name, name)
+        assert.equal(test.Dao.Name, name);
 
         test.save()
             .done(function(wrapped){
@@ -98,9 +105,10 @@
             })
     });
 
-    QUnit.asyncTest("load should return promise", function(assert){
-        expect(4);
+    QUnit.test("load should return promise", function(assert){
+        assert.expect(4);
         var name = "loadShouldReturnPromise",
+            start = assert.async(),
             testObj = new dao.DaoRef.ctors.TestTable(name);
 
         testObj.save()
@@ -235,26 +243,26 @@
         assert.ok(!_.isNull(parsed));
     });
 
-    QUnit.asyncTest("query test", function(assert){
+    QUnit.test("query test", function(assert){
         var q = qi("DaoRef"),
             name = "queryTest",
-            data = new dao.DaoRef.ctors.TestTable(name);
+            data = new dao.DaoRef.ctors.TestTable(name),
+            start = assert.async();
 
         data.save()
             .done(function (wrapped) {
                 q.from(wrapped.tableName)
                     .where("Name = " + name)
                     .load(true).done(function (r) {
-
-                    assert.ok(r.length > 0);
-                    var ids = "";
-                    $.each(r, function (i, v) {
-                        ids += v.pk() + " ";
-                        toBeDeleted.push(v);
+                        assert.ok(r.length > 0);
+                        var ids = "";
+                        $.each(r, function (i, v) {
+                            ids += v.pk() + " ";
+                            toBeDeleted.push(v);
+                        });
+                        writeMessage("query test", "ids: " + ids);
+                        start();
                     })
-                    writeMessage("query test", "ids: " + ids);
-                    start();
-                })
             })
             .fail(function (m) {
                 assert.ok(false, m);
@@ -262,23 +270,18 @@
             })
     });
 
-    //QUnit.asyncTest("Image get test", function(assert){
-    //    var q = qi("Analytics");
-    //    q.top(10).from("Image").where("date > " + new Date().toDateString()).load(true).done(function (r) {
-
-    //    });
-    //});
-
-    QUnit.asyncTest("Save collection test", function(assert){
-        expect(4);
+    QUnit.test("Save collection test", function(assert){
+        assert.expect(4);
         var name = "save collection test",
-            data = dao.construct("TestTable", {Name: name});
+            data = dao.construct("TestTable", {Name: name}),
+            start = assert.async();
 
         data.save()
             .done(function(d){
                 toBeDeleted.push(d);
                 var coll = d.TestFkTableCollection();
                 coll.add({Name: "the referencing object"});
+                coll.add({Name: "another referencing object"});
                 coll.save(true).then(function(c){
                     assert.ok(c.loaded == true);
                     c.load().then(function(reloaded){
@@ -297,9 +300,10 @@
             })
     });
 
-    QUnit.asyncTest("Collection .each after save test", function(assert){
+    QUnit.test("Collection .each after save test", function(assert){
         var name = "Use each iterator test",
-            data = dao.construct("TestTable", {Name: name});
+            data = dao.construct("TestTable", {Name: name}),
+            start = assert.async();
 
         data.save()
             .done(function(d){

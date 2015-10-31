@@ -1,3 +1,6 @@
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
 var models = (function($, _, b, d, q, w){
     var sources = {};
 

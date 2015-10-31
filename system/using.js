@@ -1,4 +1,7 @@
-﻿var using = (function ($, _) {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var using = (function ($, _) {
     var scriptsCallbacks = {},
         appDustTemplatesCallbacks = {},
         appScriptsCallbacks = {};

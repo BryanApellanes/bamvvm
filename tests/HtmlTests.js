@@ -1,4 +1,7 @@
-﻿$(document).ready(function(){
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+$(document).ready(function(){
     bam.activatePlugins();
 });
 

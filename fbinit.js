@@ -1,3 +1,6 @@
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
 window.fbAsyncInit = function() {
     FB.init({
         appId      : FbApplicationId,

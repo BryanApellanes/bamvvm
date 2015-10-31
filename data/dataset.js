@@ -1,4 +1,7 @@
-﻿/*
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+/*
 
 jQuery.dataSet plugin v0.1
 Copyright 2012, Bryan Apellanes

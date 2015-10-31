@@ -1,4 +1,7 @@
-﻿/*
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+/*
 
  * Copyright 2014, Bryan Apellanes
  * Available via the MIT or new BSD license.

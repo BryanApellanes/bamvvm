@@ -1,4 +1,7 @@
-﻿(function ($, _) {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+(function ($, _) {
     "use strict";
 
     function percentarc(canvas, options) {

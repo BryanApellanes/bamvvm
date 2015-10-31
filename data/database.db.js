@@ -1,4 +1,7 @@
-﻿var database = {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var database = {
     nameSpace: "Bryan.Common.Data",
     schemaName: "BryanCommon",
 	xrefs:[

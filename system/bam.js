@@ -1,4 +1,7 @@
-﻿/*
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+/*
 
 * Copyright 2014, Bryan Apellanes
 * Available via the MIT or new BSD license.
@@ -164,10 +167,10 @@ bam.exports = bam.exports || {};
      */
     b.view = function (viewName, data, opts) {
         var def = $.Deferred(function(){
-            var pr = this;
+            var promise = this;
             dst.render(viewName, data, function(e, r){
                 if(e){
-                    pr.reject(e);
+                    promise.reject(e);
                 } else {
                     if (_.isString(opts) || _.isElement(opts)) { // assume its jquery selector or element
                         $(function(){
@@ -177,7 +180,7 @@ bam.exports = bam.exports || {};
                         opts(r);
                     }
 
-                    pr.resolve(r);
+                    promise.resolve(r);
                 }
             });
         });
@@ -191,7 +194,6 @@ bam.exports = bam.exports || {};
         return $.Deferred(function(){
             var prom = this;
             fn(prom.resolve, args);
-            //fn.apply(this, prom.resolve, args);
         }).promise();
     };
     /**

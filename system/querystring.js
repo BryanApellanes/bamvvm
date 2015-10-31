@@ -1,4 +1,7 @@
-﻿var querystring = (function () {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var querystring = (function () {
     "use strict";
 
     function get(key, query) {        

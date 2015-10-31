@@ -1,4 +1,7 @@
-﻿(function ($) {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+(function ($) {
     "use strict";
 
     function sortChildren(el, opts) {

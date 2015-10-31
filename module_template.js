@@ -1,3 +1,6 @@
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
 var modulename = (function($,_,b,f){
     "use strict";
 

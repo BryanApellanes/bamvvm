@@ -1,4 +1,7 @@
-﻿var edit = (function ($, _) {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var edit = (function ($, _) {
     "use strict";
 
     function edit(el, opts) {

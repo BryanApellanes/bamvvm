@@ -1,4 +1,7 @@
-﻿$(function () {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+$(function () {
     bam.setAppRoot("http://uspapptstweb02:8099/");
 
     QUnit.asyncTest("jsProxy echo test", 2, function (assert) {

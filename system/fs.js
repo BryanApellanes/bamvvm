@@ -1,4 +1,7 @@
-﻿var fs = (function ($, _) {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var fs = (function ($, _) {
     "use strict";
     var _local = true;
 

@@ -1,3 +1,6 @@
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
 var secureChannel = (function($, _, b, sc){
     "use strict";
     var pki = forge.pki,

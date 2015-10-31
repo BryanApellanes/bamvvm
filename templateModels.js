@@ -1,4 +1,7 @@
-﻿var templates = (function($,_,b){
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var templates = (function($,_,b){
     "use strict";
 
     var shared = {

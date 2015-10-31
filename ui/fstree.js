@@ -1,3 +1,6 @@
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
 var fstree = (function($,_,b,f){
     "use strict";
     var id = 1,

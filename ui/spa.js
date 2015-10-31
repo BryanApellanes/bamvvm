@@ -1,4 +1,7 @@
-﻿/* application */
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+/* application */
 (function ($, _, d, b, w) {
     "use strict";
 
@@ -717,6 +720,9 @@
                         the = this;
                     p.app.history.add(p);
                     setNavButtonState(p.appName);
+                    if(!_.isUndefined(data.targetState)){
+                        this.goToState(data.targetState, data);
+                    }
 
                     return this;
                 },
@@ -741,11 +747,11 @@
                         }
                     })
                 },
-                goToState: function (ts, data) {
-                    if (ts == "" || _.isUndefined(ts)) {
-                        ts = "initial";
+                goToState: function (toState, data) {
+                    if (toState == "" || _.isUndefined(toState)) {
+                        toState = "initial";
                     }
-                    this.pages[this.currentPage].transitionTo(ts, data);
+                    this.pages[this.currentPage].transitionTo(toState, data);
                     return this;
                 },
                 navigateTo: function (pageName, data) {
@@ -866,7 +872,7 @@
     b.activateApps = function () {
         $("[data-app]").each(function (i, o) {
             var appName = $(o).attr("data-app"),
-                startPage = $(o).attr("data-start") || "start",
+                startPage = $(o).attr("data-start") || "home",
                 app = b.app(appName);
 
             app.run(startPage);

@@ -1,3 +1,6 @@
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
 var methodForms = (function($, _, b, w){
     "use strict";
 

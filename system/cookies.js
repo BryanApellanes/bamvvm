@@ -1,4 +1,7 @@
-﻿var cookies = (function () {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var cookies = (function () {
     function set(strName, value, expireAfterDays) {
         var expires = "";
         if (expireAfterDays) {

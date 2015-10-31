@@ -1,4 +1,7 @@
-﻿var colorscheme = (function () {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var colorscheme = (function () {
 
     var defaultColorScheme = {
         Grays: {

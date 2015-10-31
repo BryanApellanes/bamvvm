@@ -1,4 +1,7 @@
-﻿var design = (function ($, _, dst) {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+var design = (function ($, _, dst) {
     "use strict";    
 
     function contrast(hexcolor) {

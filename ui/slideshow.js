@@ -1,4 +1,7 @@
-﻿(function ($) {
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+(function ($) {
     function setSlideShow(el, options) {
         if ($(el).data("slideshow") == null || undefined) {
             var ss = new slideShow(el, options);

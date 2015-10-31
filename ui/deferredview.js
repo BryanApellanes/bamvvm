@@ -1,3 +1,6 @@
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
 var deferredView = (function($, _, d, b){
     "use strict";
 

@@ -1,4 +1,7 @@
-﻿function errorHandler(e){
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+function errorHandler(e){
     $("#errorMessages").text(e);
 }
 

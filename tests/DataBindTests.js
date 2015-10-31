@@ -1,4 +1,7 @@
-﻿$(document).ready(function(){
+/*
+	Copyright © Bryan Apellanes 2015  
+*/
+$(document).ready(function(){
     "use strict";
     dao.setCtx("DaoRef");
     $("body").dataSet().dataSetPlugins();
