@@ -699,6 +699,7 @@
                     if (_.isUndefined(to)) {
                         to = from;
                     }
+                    data = data ||{};
 
                     try {
                         if (this.pageTransitionFilters.from[from].to[to]) {
