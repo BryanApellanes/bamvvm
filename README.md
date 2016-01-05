@@ -11,7 +11,7 @@ Views in BAMvvm are html files or dust templates.  Html has always been the lang
 on the web and is ubiquitous.  Dynamism in a view is achieved by the use of viewModels.
 
 # ViewModels
-ViewModels in BAMvvm are the "W" in the MVW or the "*" in MV*.  BAMvvm implements the MVVM pattern in the browser.
+ViewModels in BAMvvm are the "W" in the MVW or the "\*" in MV*.  BAMvvm implements the MVVM pattern in the browser.
 ViewModels define what actions can be taken on a view and provides the wiring between models and views.
 
 # Data attributes
