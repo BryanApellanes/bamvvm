@@ -141,9 +141,13 @@ var observer = (function(){
         return result;
     }
 
-    return {
+
+    var o = {
         observe: observe,
         observeArray: observeArray
-    }
+    };
+
+    _.mixin(o);
+    return o;
 })();
 
