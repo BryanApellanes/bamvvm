@@ -13,7 +13,7 @@
             second = dataset.ss,
             milliseconds = dataset.ms,
             date = new Date();
-        date.setUTCMonth(month, day);
+        date.setUTCMonth(month - 1, day);
         date.setUTCFullYear(year);
         date.setUTCHours(hour, minute, second, milliseconds);
         return date;
@@ -47,7 +47,7 @@
     }
 
     $.fn.friendlyDate = function () {
-        return this.each(function () {
+        return $(this).each(function () {
             var date = getDate($(this)),
                 friendly = friendlyDate(date);
             $(this).text(friendly);
