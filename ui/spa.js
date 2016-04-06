@@ -717,8 +717,7 @@
                     this.pageTransitions.from[from].to[to].play(data);
                     this.previousPage = from;
                     this.currentPage = to;
-                    var p = this.pages[to],
-                        the = this;
+                    var p = this.pages[to];
                     p.app.history.add(p);
                     setNavButtonState(p.appName);
                     if(!_.isUndefined(data.targetState)){
