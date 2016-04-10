@@ -1337,6 +1337,9 @@ var html = (function($, _){
                 });
 
                 return result;
+            },
+            renderIn: function(el){
+                $(el).append(this.html());
             }
         }
     }

@@ -72,6 +72,17 @@
         this.linkTags = [];
         this.app = app;
 
+        function detachStyleSheetLinks(){
+            _.each(the.linkTags, function(link){
+               $(link).detach();
+            });
+        }
+
+        function attachStyleSheetLinks(){
+            _.each(the.linkTags, function(link){
+                $("head").append(link);
+            });
+        }
         /**
          * data set by transitionTo (which is called by b.setState) to
          * allow data passing from state to state
@@ -109,10 +120,12 @@
                     }else{
                         $container.show(the.helloEffect);
                     }
+                    attachStyleSheetLinks();
                     the.activate(_d);
                 } else {
                     if(noEffect){
                         $container.empty().append(the.content.html()).show();
+                        attachStyleSheetLinks();
                         the.loadStates(_d);
                     }else{
                         $container.empty();
@@ -120,6 +133,7 @@
                         $container.show({
                             effect: the.helloEffect,
                             complete: function () {
+                                attachStyleSheetLinks();
                                 the.loadStates(_d);
                             }
                         });
@@ -153,9 +167,7 @@
                 var uiClone = $container.clone();
 
                 the.uiState = $container.detachAndReplaceWith(uiClone);
-                _.each(the.linkTags, function (v) {
-                    $(v).detach();
-                })
+                detachStyleSheetLinks();
             }
             if(noEffect){
                 $container.hide();
@@ -447,15 +459,15 @@
                     });
                     resolve();
                 })
-                    .then(function(){
-                        app.createPageTransition(startPageName + "To" + startPageName, startPageName, startPageName, function(tx, data){
-                            var page = b.app(tx.appName).pages[tx.to];
-                            page.load().done(function(){
-                                page.loadStates(data);
-                            });
+                .then(function(){
+                    app.createPageTransition(startPageName + "To" + startPageName, startPageName, startPageName, function(tx, data){
+                        var page = b.app(tx.appName).pages[tx.to];
+                        page.load().done(function(){
+                            page.loadStates(data);
                         });
-                        app.pageTransition(startPageName, startPageName).preLoadPages();
                     });
+                    app.pageTransition(startPageName, startPageName).preLoadPages();
+                });
             } else {
                 $(b.app(subAppName).contentSelector).text(result.Message);
             }
@@ -615,35 +627,35 @@
             renderViews(document, page.appName);
             resolve();
         }).then(function(){
-                app.container().activate();
+            app.container().activate();
 
-                activateNavigation(page.appName);
+            activateNavigation(page.appName);
 
-                activateBackButtons(page.appName);
+            activateBackButtons(page.appName);
 
-                activateForwardButtons(page.appName);
+            activateForwardButtons(page.appName);
 
-                activateStateEvents(page.appName);
+            activateStateEvents(page.appName);
 
-                _.each(page.linkTags, function (v) { // populated by .load
-                    $(v).remove();
-                    $("head").append(v);
-                });
+            _.each(page.linkTags, function (v) { // populated by .load
+                $(v).remove();
+                $("head").append(v);
+            });
 
-                if (_.isFunction(app.pageActivationHandlers[page.name])) {
-                    app.pageActivationHandlers[page.name](page, d);
-                }else if(_.isArray(app.pageActivationHandlers[page.name])){
-                    _.each(app.pageActivationHandlers[page.name], function(fn){
-                        fn(page, d);
-                    });
-                }
-                _.each(app.anyPageActivationHandlers, function (fn) {
+            if (_.isFunction(app.pageActivationHandlers[page.name])) {
+                app.pageActivationHandlers[page.name](page, d);
+            }else if(_.isArray(app.pageActivationHandlers[page.name])){
+                _.each(app.pageActivationHandlers[page.name], function(fn){
                     fn(page, d);
                 });
-
-                attachModels(page.appName);
-                page.isActivated = true;
+            }
+            _.each(app.anyPageActivationHandlers, function (fn) {
+                fn(page, d);
             });
+
+            attachModels(page.appName);
+            page.isActivated = true;
+        });
     }
 
     var apps = {};
