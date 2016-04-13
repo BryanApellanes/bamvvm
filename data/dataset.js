@@ -16,7 +16,7 @@ var dataset = $("#myId").data("dataset");
 
 */
 /* dataset */
-var dataset = {};
+var dataset = {log: function(msg){}};
 
 (function (ds, $) {
     var events = ["abort", "blur", "change", "click", "dblclick", "error", "focus", "keydown", "keypress", "keyup", "load", "mousedown", "mousemove", "mouseout", "mouseover", "mouseup", "reset", "resize", "select", "submit", "unload"];
@@ -276,6 +276,29 @@ var dataset = {};
                 result = fn;
             }
 
+            if (!$.isFunction(fn) && hasPrefix(str, "vm:")) {
+                var segments = str.split(":");
+                if(segments.length !== 3){
+                    ds.log("invalid viewModel specification: " + str);
+                }else{
+                    var selector = segments[1],
+                        methodName = segments[2],
+                        vm;
+                    
+                    vm = $(selector).data("viewModel");
+                    if(_.isObject(vm.model)){
+                        vm = vm.model;
+                    }
+                    
+                    if(!_.isFunction(vm[methodName])){
+                        ds.log("invalid viewModel method specified: " + methodName);
+                    }else{
+                        result = vm[methodName];
+                        fn = result;
+                    }
+                }
+            }
+
             if (!$.isFunction(fn) && hasPrefix(str, "f:")) {
                 result = str.substr(2, str.length - 1);
                 result = getFunction(result);
@@ -288,11 +311,7 @@ var dataset = {};
 
             if (!$.isFunction(fn) && hasPrefix(str, "b:")) {
                 result = str.substr(2, str.length - 1);
-                if (result == "1" || result == 1 || result == "true" || result == "True") {
-                    result = true;
-                } else {
-                    result = false;
-                }
+                result = !!(result == "1" || result == 1 || result == "true" || result == "True");
             }
         }
 

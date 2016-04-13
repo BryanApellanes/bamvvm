@@ -89,7 +89,7 @@ var html = (function($, _){
         return t;
     }
 
-    return function(tagName, objectAttributes){
+    return function(tagName, objectAttributes, text){
         var container = createElement("div"),
             firstTag;
         if(_.isString(tagName)){
@@ -100,6 +100,7 @@ var html = (function($, _){
                 throw new Error("tagName must be a valid html tagName");
         }
 
+        firstTag.text(text);
         _.each(objectAttributes, function(v, k){
             firstTag.attr(k, v);
         });
