@@ -658,10 +658,20 @@
         });
     }
 
+    function log(type, msgFormat, formatArgs){
+        if(b.log){
+            b.log[type](msgFormat, formatArgs);
+        }else{
+            if(console && console.log){
+                console.log(_.format("{0}: {1}", type, _.format(msgFormat, formatArgs)));
+            }
+        }
+    }
+    
     var apps = {};
 
     var app = function (appName, renderInSelector) {
-        if (_.isUndefined(apps[appName])) {
+        if(_.isUndefined(apps[appName])){
             apps[appName] = {
                 /** conf **/
                 pages: {},
@@ -677,6 +687,12 @@
                 helloEffect: "fade",
                 attachModels: function(){
                     attachModels(appName);
+                },
+                page: function(pageName){
+                    if(_.isUndefined(pageName)){
+                        pageName = this.currentPage;
+                    }
+                    return this.pages[pageName];
                 },
                 /**
                  * Set the data filter on the specified transition
@@ -850,6 +866,17 @@
                         }
                     }
                     return this.helloEffect;
+                },
+                log: {
+                    info: function(msgFormat, formatArgs){
+                        log("Info", msgFormat, formatArgs);
+                    },
+                    warning: function(msgFormat, formatArgs){
+                        log("Warning", msgFormat, formatArgs);
+                    },
+                    error: function(msgFormat, formatArgs){
+                        log("Error", msgFormat, formatArgs);
+                    }
                 }
             };
         }
@@ -878,7 +905,9 @@
             top: '50%', // Top position relative to parent
             left: '50%' // Left position relative to parent
         }, opts || {});
-        return new Spinner(config).spin(el);
+        var spinner = new Spinner(config).spin(el);
+        $(el).data('spinner', spinner);
+        return spinner;
     };
 
     b.activateApps = function () {

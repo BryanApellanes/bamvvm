@@ -23,7 +23,7 @@ function tag(name, attrsOrText){
         });
     }else if (_.isObject(attrsOrText) && !attrsOrText.isTag){
         _.each(attrsOrText, function(v, k){
-            $(element).attr(k, v);
+            $(element).attr(k.replace('_', '-'), v);
         });
     }else if(_.isString(attrsOrText)){
         $(element).text(attrsOrText);
