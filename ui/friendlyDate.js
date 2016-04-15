@@ -11,11 +11,10 @@
             hour = dataset.hh,
             minute = dataset.mm,
             second = dataset.ss,
-            milliseconds = dataset.ms,
             date = new Date();
         date.setUTCMonth(month - 1, day);
         date.setUTCFullYear(year);
-        date.setUTCHours(hour, minute, second, milliseconds);
+        date.setUTCHours(hour, minute, second, 0);
         return date;
     }
 
