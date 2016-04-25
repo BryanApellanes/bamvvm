@@ -296,7 +296,7 @@ bam.exports = bam.exports || {};
             ev.returnValue = false;
         }
     };
-
+    
     b.activatePlugins = function () {
         $("[data-plugin]").dataSet().dataSetPlugins();
         $("body").dataSetEvents();

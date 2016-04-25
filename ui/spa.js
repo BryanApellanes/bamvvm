@@ -586,7 +586,6 @@
             if (!_.isNull(viewModelName)) {
                 var viewModel = app.viewModels[viewModelName],
                     viewModelCtor = _.getFunction(viewModelName);
-
                 if (_.isUndefined(viewModel) && _.isFunction(viewModelCtor)) {
                     viewModel = $(scopeElement).data("viewModel"); // check if it has been constructed by the render phase
                     if (!_.isObject(viewModel)) {
@@ -594,23 +593,20 @@
                         $(scopeElement).data("viewModel", viewModel);
                     }
                 }
-
                 if (!_.isUndefined(viewModel)) {
                     if (viewModel.model) {
                         viewModel = viewModel.model;
                     }
-
                     if (_.isFunction(viewModel.init)) {
                         viewModel.init();
                     }
-
                     if (_.isFunction(viewModel.activate)) {
                         viewModel.activate(scopeElement);
                     }
-
                     if (!_.isUndefined($(scopeElement).attr("itemscope"))) {
                         _.setItem(scopeElement, viewModel);
                     }
+                    app.setViewModel(viewModelName, viewModel);
                 }
             }
         });
@@ -836,8 +832,8 @@
                 viewData: viewData,
                 renderViews: renderViews,
                 contentSelector: renderInSelector || "[data-app=" + appName + "]",
-                container: function () {
-                    return $(app(appName).contentSelector);
+                container: function (ctx) {
+                    return $(app(appName).contentSelector, ctx || window);
                 },
                 history: new history(appName).init(),
                 writeTemplate: function (obj) {

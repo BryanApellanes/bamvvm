@@ -313,6 +313,15 @@ var dataset = {log: function(msg){}};
                 result = str.substr(2, str.length - 1);
                 result = !!(result == "1" || result == 1 || result == "true" || result == "True");
             }
+            
+            if(!$.isFunction(fn) && hasPrefix(str, "a:")){
+                result = str.substr(2, str.length - 1);
+                var temp = [];
+                _.each(result.split(","), function(v){
+                    temp.push(v.trim());
+                });
+                result = temp;
+            }
         }
 
         return result;
