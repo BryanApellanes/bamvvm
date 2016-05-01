@@ -832,8 +832,8 @@
                 viewData: viewData,
                 renderViews: renderViews,
                 contentSelector: renderInSelector || "[data-app=" + appName + "]",
-                container: function (ctx) {
-                    return $(app(appName).contentSelector, ctx || window);
+                container: function () {
+                    return $(app(appName).contentSelector);
                 },
                 history: new history(appName).init(),
                 writeTemplate: function (obj) {
