@@ -1,0 +1,9 @@
+[submodule "tvg/troojs"]
+	path = tvg/troojs
+	url = git@github.com:BryanApellanes/troojs.git
+[submodule "tvg/vyoojs"]
+	path = tvg/vyoojs
+	url = git@github.com:BryanApellanes/vyoojs.git
+[submodule "tvg/gloojs"]
+	path = tvg/gloojs
+	url = git@github.com:BryanApellanes/gloojs.git
