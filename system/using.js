@@ -1,6 +1,3 @@
-/*
-	Copyright © Bryan Apellanes 2015  
-*/
 var using = (function ($, _) {
     var scriptsCallbacks = {},
         appDustTemplatesCallbacks = {},

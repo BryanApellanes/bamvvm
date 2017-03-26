@@ -133,7 +133,7 @@ var secureChannel = (function($, _, b, sc){
     var sessionStarter = null;
     function startSession(){
 
-        if(sessionStarter == null){
+        if(sessionStarter === null){
             var def = $.Deferred(function(){
                 var prom = this; // the deferred object
 
