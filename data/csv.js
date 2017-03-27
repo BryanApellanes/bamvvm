@@ -9,7 +9,7 @@
  * comma separated value outputter
  */
 var csv = (function ($, _) {
-    "use stric";
+    "use strict";
 
     function format() {
         var s = arguments[0];
@@ -48,8 +48,8 @@ var csv = (function ($, _) {
                 var first = true;                
                 _.each(properties, function(p){  
                     var val = o[p],
-                        f = "{0}"; // string format
-                    replaceQuotes = false;
+                        f = "{0}", // string format
+                        replaceQuotes = false;
 
                     if (_.isString(val)) {
                         replaceQuotes = val.indexOf('"') !== -1;

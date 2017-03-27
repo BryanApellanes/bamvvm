@@ -188,7 +188,7 @@ var dbs = (function($, _, b, d, w){
 
         var tn = deriveTableName(example);
 
-        if(db == null){
+        if(db === null){
             db = new database();
         }
 
