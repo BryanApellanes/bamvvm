@@ -764,7 +764,7 @@
                             page.load().then(function(){
                                 app.pageLoaded(page);
                                 loadedCount++;
-                                if(loadedCount == pageCount){
+                                if(loadedCount === pageCount){
                                     app.pagesLoaded();
                                 }
                             });
@@ -772,7 +772,7 @@
                     })
                 },
                 goToState: function (toState, data) {
-                    if (toState == "" || _.isUndefined(toState)) {
+                    if (toState === "" || _.isUndefined(toState)) {
                         toState = "initial";
                     }
                     this.pages[this.currentPage].transitionTo(toState, data);
