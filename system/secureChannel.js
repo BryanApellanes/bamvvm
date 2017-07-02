@@ -74,12 +74,6 @@ var secureChannel = (function($, _, b, sc){
                             global: false,
                             crossDomain: false,
                             type: "POST",
-                            // headers: {
-                            //     "SPSSESS": _.getCookie("SPSSESS"),
-                            //     "ValidationToken": validationToken.HashCipher,
-                            //     "Timestamp": validationToken.NonceCipher,
-                            //     "Padding": "true"
-                            // },
                             headers: {
                                 "X-Bam-Sps-Session": _.getCookie("SPSSESS"),
                                 "X-Bam-Validation-Token": validationToken.HashCipher,
