@@ -5,7 +5,6 @@ var secureChannel = (function($, _, b, sc){
     "use strict";
     var pki = forge.pki,
         random = forge.random,
-        sha1 = forge.md.sha1,
         aes = forge.aes,
         util = forge.util;
 
@@ -50,11 +49,17 @@ var secureChannel = (function($, _, b, sc){
 
         function createValidationToken(session, plainPostData){
             var nonce = new Instant().toString(),
-                hash = _.sha1(nonce + ":" + plainPostData),
+                hash = _.sha256(nonce + ":" + plainPostData),
                 hashCipher = session.rsaEncrypt(hash),
-                nonceCipher = session.rsaEncrypt(nonce);
+                nonceCipher = session.rsaEncrypt(nonce),            
+                hmac = forge.hmac.create();
+
+            hmac.start('sha256', session.symmetricKey64);
+            hmac.update(plainPostData);
+            var signature = 'sha256=' + hmac.digest().toHex();
 
             return {
+                Signature: signature,
                 HashCipher: hashCipher,
                 NonceCipher: nonceCipher
             }
@@ -76,10 +81,11 @@ var secureChannel = (function($, _, b, sc){
                             crossDomain: false,
                             type: "POST",
                             headers: {
-                                "SPSSESS": _.getCookie("SPSSESS"),
-                                "ValidationToken": validationToken.HashCipher,
-                                "Timestamp": validationToken.NonceCipher,
-                                "Padding": "true"
+                                "X-Bam-Sps-Session": _.getCookie("SPSSESS"),
+                                "X-Bam-Validation-Token": validationToken.HashCipher,
+                                "X-Bam-Timestamp": validationToken.NonceCipher,
+                                "X-Bam-Signature": validationToken.Signature,
+                                "X-Bam-Padding": "true"
                             },
                             contentType: "text/plain; charset=utf-8"
                         };
@@ -133,7 +139,7 @@ var secureChannel = (function($, _, b, sc){
     var sessionStarter = null;
     function startSession(){
 
-        if(sessionStarter == null){
+        if(sessionStarter === null){
             var def = $.Deferred(function(){
                 var prom = this; // the deferred object
 
@@ -143,13 +149,13 @@ var secureChannel = (function($, _, b, sc){
                             var createdKey = _createAesKey(),
                                 publicKey = pki.publicKeyFromPem(r.Data.PublicKey),
                                 key = createdKey.base64Key,
-                                keyHash = sha1.create().update(key).digest().toHex(),
+                                keyHash = _.sha256(key),
                                 keyCipher = publicKey.encrypt(key),
                                 keyCipherB64 = util.encode64(keyCipher),
                                 keyHashCipher = publicKey.encrypt(keyHash),
                                 keyHashCipherB64 = util.encode64(keyHashCipher),
                                 iv = createdKey.base64IV,
-                                ivHash = sha1.create().update(iv).digest().toHex(),
+                                ivHash = _.sha256(iv),
                                 ivCipher = publicKey.encrypt(iv),
                                 ivCipher64 = util.encode64(ivCipher),
                                 ivHashCipher = publicKey.encrypt(ivHash),
@@ -163,31 +169,31 @@ var secureChannel = (function($, _, b, sc){
                                 IVHashCipher: ivHashCipher64,
                                 UsePkcsPadding: true
                             })
-                                .done(function(r){
-                                    if(r.Success){
-                                        var session ={
-                                            publicKey: publicKey,
-                                            symmetricKey: createdKey.key,
-                                            symmetricIV: createdKey.iv,
-                                            symmetricKey64: createdKey.base64Key,
-                                            symmetricIV64: createdKey.base64IV,
-                                            started: true,
-                                            clientId: clientId
-                                        };
-                                        _resolveSession(prom, session);
-                                    }else{
-                                        _rejectSession(prom, {message: r.Message});
-                                    }
-                                })
-                                .fail(function(r){
-                                    _rejectSession(prom, {message: r.Message});//prom.reject(r.Message);
-                                })
+                            .done(function(r){
+                                if(r.Success){
+                                    var session ={
+                                        publicKey: publicKey,
+                                        symmetricKey: createdKey.key,
+                                        symmetricIV: createdKey.iv,
+                                        symmetricKey64: createdKey.base64Key,
+                                        symmetricIV64: createdKey.base64IV,
+                                        started: true,
+                                        clientId: clientId
+                                    };
+                                    _resolveSession(prom, session);
+                                }else{
+                                    _rejectSession(prom, {message: r.Message});
+                                }
+                            })
+                            .fail(function(r){
+                                _rejectSession(prom, {message: r.Message});
+                            })
                         }else{
                             _rejectSession(prom, {message: r.Message});
                         }
                     })
                     .fail(function(r){
-                        _rejectSession(prom, {message: r.Message});//prom.reject(r);
+                        _rejectSession(prom, {message: r.Message});
                     });
 
             });
