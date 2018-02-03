@@ -296,7 +296,11 @@ bam.exports = bam.exports || {};
             ev.returnValue = false;
         }
     };
-    
+
+    b.withoutExtension = function(path){
+        return path.replace(/\.[^/.]+$/, "");
+    };
+
     b.activatePlugins = function () {
         $("[data-plugin]").dataSet().dataSetPlugins();
         $("body").dataSetEvents();
