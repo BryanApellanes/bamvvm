@@ -84,10 +84,7 @@ var secureChannel = (function($, _, b, sc){
                                 "X-Bam-Sps-Session": _.getCookie("SPSSESS"),
                                 "X-Bam-Validation-Token": validationToken.HashCipher,
                                 "X-Bam-Timestamp": validationToken.NonceCipher,
-<<<<<<< HEAD
                                 "X-Bam-Signature": validationToken.Signature,
-=======
->>>>>>> c99345732168ef9e2c32e05e424dcbc891d417f5
                                 "X-Bam-Padding": "true"
                             },
                             contentType: "text/plain; charset=utf-8"

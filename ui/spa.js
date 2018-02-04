@@ -437,7 +437,7 @@
 
     function _loadPages(subAppName, startPageName) {
         // load html from ~/pages/ using Pages
-        return _.act("bam", "getpages", { bamAppName: subAppName }).done(function (result) {
+        return _.act("meta", "pages", { bamAppName: subAppName }).done(function (result) {
             if (!_.isNull(result) && result.Success) {
                 var vals = result.Data,
                     app = b.app(subAppName);
