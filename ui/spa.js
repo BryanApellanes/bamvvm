@@ -92,7 +92,7 @@
 
         this.load = function () {
             return $.ajax({
-                url: b.getAppRoot() + "bam/apps/" + the.appName + "/pages/" + the.name + ".html?nocache=" + b.randomString(4),
+                url: b.getAppRoot() + "/" + the.name + ".html?nocache=" + b.randomString(4),
                 dataType: "html",
                 success: function (html) {
                     var p = document.createElement("iframe");
@@ -102,7 +102,7 @@
                     $("link", p).each(function (i, v) {
                         the.linkTags.push(v);
                     });
-                    the.content = $(p);//$(the.contentSelector, p);
+                    the.content = $(p);
                     the.loaded = true;
                 }
             }).promise();
@@ -438,8 +438,8 @@
     function _loadPages(subAppName, startPageName) {
         // load html from ~/pages/ using Pages
         return _.act("meta", "pages", { bamAppName: subAppName }).done(function (result) {
-            if (!_.isNull(result) && result.Success) {
-                var vals = result.Data,
+            if (!_.isNull(result)) {
+                var vals = result,
                     app = b.app(subAppName);
                 b.promise(function(resolve){
                     // instantiate all pages (not yet loaded)
