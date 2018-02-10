@@ -8,7 +8,7 @@
 *
 * Bam simple single page application framework
 */
-
+const thirdPartyPath = '../../3rdParty/';
 
 var bam = bam || function(appName){
         var app;
@@ -20,7 +20,13 @@ var bam = bam || function(appName){
 bam.ctor = bam.ctor || {};
 bam.exports = bam.exports || {};
 
-(function (b, d, $, dst, _) {
+let jQuery = jQuery || require(`${thirdPartyPath}jquery`);
+let dust = dust || require(`${thirdPartyPath}dust`);
+let _ = _ || require(`${thirdPartyPath}lodash.underscore`);
+let dao = dao || require('../data/dao');
+let window = window || {};
+
+module.exports = (function (_bam, _dao, $, dst, _) {
     "use strict";
     var appPath = "",
         appRoot = window.location.protocol + "//" + window.location.host + "/",
@@ -44,7 +50,7 @@ bam.exports = bam.exports || {};
      * subdirectory
      * @param {String} n The name to set the application name to
      */
-    b.setAppPath = function (n) {
+    _bam.setAppPath = function (n) {
         var m = n.match("/$");
         if ((m === null || m === undefined) && !(n === null || n === undefined)) {
             n = n + "/";
@@ -57,7 +63,7 @@ bam.exports = bam.exports || {};
      *
      * @return {String}
      */
-    b.randomLetter = function () {
+    _bam.randomLetter = function () {
         var chars = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
         return chars[Math.floor(Math.random() * 26)];
     };
@@ -67,7 +73,7 @@ bam.exports = bam.exports || {};
      *
      * @return {number}
      */
-    b.randomNumber = function(){
+    _bam.randomNumber = function(){
         var nums = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
         return nums[Math.floor(Math.random() * 10)];
     };
@@ -77,7 +83,7 @@ bam.exports = bam.exports || {};
      *
      * @return {Boolean}
      */
-    b.randomBool = function(){
+    _bam.randomBool = function(){
         return Math.random() > .5;
     };
 
@@ -87,13 +93,13 @@ bam.exports = bam.exports || {};
      * @param {number} l the length of the string to return
      * @return {String}
      */
-    b.randomString = function(l){
+    _bam.randomString = function(l){
         var val = "";
         for(var i = 0; i < l;i++){
-            if(b.randomBool()){
-                val += b.randomLetter();
+            if(_bam.randomBool()){
+                val += _bam.randomLetter();
             }else{
-                val += b.randomLetter().toUpperCase();
+                val += _bam.randomLetter().toUpperCase();
             }
         }
         return val;
@@ -105,7 +111,7 @@ bam.exports = bam.exports || {};
      * @param s a json date string
      * @return {Date}
      */
-    b.toDate = function(s) {
+    _bam.toDate = function(s) {
         return new Date(parseInt(s.substr(6)));
     };
 
@@ -115,8 +121,8 @@ bam.exports = bam.exports || {};
      * @param s
      * @return {Date}
      */
-    b.toLocal = function(s) {
-        return new Date(b.toDate(s).toLocaleString() + " UTC");
+    _bam.toLocal = function(s) {
+        return new Date(_bam.toDate(s).toLocaleString() + " UTC");
     };
 
     /**
@@ -125,11 +131,11 @@ bam.exports = bam.exports || {};
      *
      * @return {String}
      */
-    b.getAppRoot = function () {
+    _bam.getAppRoot = function () {
         return appRoot + appPath;
     };
 
-    b.setAppRoot = function (root, path) {
+    _bam.setAppRoot = function (root, path) {
         appRoot = root;
         if (!_.isUndefined(path)) {
             appPath = path;
@@ -140,7 +146,7 @@ bam.exports = bam.exports || {};
         }
     };
 
-    b.proxyRoot = function(proxyName, root, path){
+    _bam.proxyRoot = function(proxyName, root, path){
         if(_.isUndefined(root)){
             root = appRoot;
         }
@@ -171,7 +177,7 @@ bam.exports = bam.exports || {};
      * @param opts element or selector to have the data object attached automatically; function if
      *              the developer intends to handle the data in a different way
      */
-    b.view = function (viewName, data, opts) {
+    _bam.view = function (viewName, data, opts) {
         var def = $.Deferred(function(){
             var promise = this;
             dst.render(viewName, data, function(e, r){
@@ -194,7 +200,7 @@ bam.exports = bam.exports || {};
         return def.promise();
     };
 
-    b.promise = function(fn){
+    _bam.promise = function(fn){
         var args = [].splice.call(arguments, 0);
         fn = args.splice(0, 1)[0];
         return $.Deferred(function(){
@@ -206,20 +212,20 @@ bam.exports = bam.exports || {};
      * Alias for view
      * @type {Function}
      */
-    b.render = b.view;
+    _bam.render = _bam.view;
 
-    b.construct = function(ctorName){
-        if(b.ctor[ctorName]){
-            return new b.ctor[ctorName];
+    _bam.construct = function(ctorName){
+        if(_bam.ctor[ctorName]){
+            return new _bam.ctor[ctorName];
         }
         return false;
     };
 
-    b.htmlEncode = function (v) {
+    _bam.htmlEncode = function (v) {
         return $(document.createElement("div")).text(v).html();
     };
 
-    b.htmlDecode = function (v) {
+    _bam.htmlDecode = function (v) {
         return $(document.createElement("div")).html(v).text();
     };
 
@@ -263,15 +269,15 @@ bam.exports = bam.exports || {};
      * @param options - default configuration overrides
      * @returns jQuery promise
      */
-    b.invoke = function (className, method, args, format, options) {
+    _bam.invoke = function (className, method, args, format, options) {
         if (!$.isArray(args)) {
             var a = [];
             a.push(args);
             args = a;
         }
 
-        var root = b.proxyRoot(b[className].proxyName),
-            urlFormat = root + className + "/" + method + ".{0}?nocache=" + b.randomString(4) + "&",
+        var root = _bam.proxyRoot(_bam[className].proxyName),
+            urlFormat = root + className + "/" + method + ".{0}?nocache=" + _bam.randomString(4) + "&",
             config = getInvokeConfig(args, urlFormat, format);
 
         $.extend(config, options);
@@ -288,7 +294,7 @@ bam.exports = bam.exports || {};
         }
     };
 
-    b.preventDefault = function(ev){
+    _bam.preventDefault = function(ev){
         if (ev.preventDefault) {
             ev.preventDefault();
         }
@@ -297,11 +303,24 @@ bam.exports = bam.exports || {};
         }
     };
 
-    b.withoutExtension = function(path){
+    _bam.withoutExtension = function(path){
         return path.replace(/\.[^/.]+$/, "");
     };
 
-    b.activatePlugins = function () {
+    const _tools = {
+        bam: this,
+        dao: _dao,
+        jQuery: $,
+        lodash: _,
+        dust: dst,
+        window: window
+    };
+
+    _bam.tools = function(){
+        return _tools;
+    }
+
+    _bam.activatePlugins = function () {
         $("[data-plugin]").dataSet().dataSetPlugins();
         $("body").dataSetEvents();
     };
@@ -314,8 +333,9 @@ bam.exports = bam.exports || {};
 
     $(function(){
         if(_ !== undefined && _.mixin !== undefined){
-            _.mixin(b);
+            _.mixin(_bam);
         }
     })
-})(bam, dao, jQuery, dust, _);
 
+    return _bam;
+})(bam, dao, jQuery, dust, _);

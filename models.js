@@ -1,7 +1,7 @@
 /*
 	Copyright © Bryan Apellanes 2015  
 */
-var models = (function($, _, b, d, q, w){
+var models = (function(){
     var sources = {};
 
     function setModel(name, data){
@@ -12,16 +12,10 @@ var models = (function($, _, b, d, q, w){
         return sources[name];
     }
 
-    return function(opts){
-        var config = {
-
-        };
-
-        $.extend(config, opts);
-
+    return function(){
         return {
             getModel: getModel,
             setModel: setModel
         }
     }
-})(jQuery, _, bam, dao, qi, window || {});
+})();
