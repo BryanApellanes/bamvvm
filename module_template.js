@@ -1,7 +1,7 @@
 /*
 	Copyright © Bryan Apellanes 2015  
 */
-var modulename = (function($,_,b,f){
+var modulename = (function(){
     "use strict";
 
 
@@ -11,10 +11,8 @@ var modulename = (function($,_,b,f){
 
         };
 
-        $.extend(config, opts);
-
         return {
 
         }
     }
-})(jQuery, _, bam, fs);
+})(jQuery, _, bam);

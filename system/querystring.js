@@ -46,3 +46,5 @@ var querystring = (function () {
         set: set
     }
 })();
+
+module.exprts = querystring;
