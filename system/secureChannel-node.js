@@ -67,7 +67,6 @@ module.exports = (function(){
                             url = root + "SecureChannel/Invoke.json?nocache=" + bam.randomString(4) + "&",
                             postData = getPostData(session),
                             validationToken = createValidationToken(session, postData.plain),
-                            //client = requestJson.createClient(root);
                             config = {
                                 url: url,
                                 dataType: "json",
@@ -87,7 +86,8 @@ module.exports = (function(){
                                     "X-Bam-Padding": "true"
                                 }
                             };
-                        request.post(config, (err, res, responseData) => {
+                        request.post(config, (err, res, body) => {
+                            let responseData = JSON.parse(body);
                             if(responseData.Success){
                                 let json = session.decrypt(responseData.Data);
                                 resolve(JSON.parse(json));
