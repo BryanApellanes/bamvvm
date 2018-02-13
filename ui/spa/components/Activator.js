@@ -1,3 +1,6 @@
+/**
+ * Activator.js
+ */
 module.exports = (function(){
     return function(options){
         let _ = options.lodash,
@@ -9,12 +12,12 @@ module.exports = (function(){
         let activator = {            
             activate: function(page, d) {
                 var app = page.app;
-        
-                b.promise(function(resolve){
+                
+                new Promise((resolve, reject) => {
                     viewRenderer.renderViews(document, page.appName);
                     resolve();
-                }).then(function(){
-                    app.container().activate();
+                }).then(()=>{
+                    //app.container().activate();
         
                     activator.activateNavigation(page.appName);
         
@@ -42,7 +45,7 @@ module.exports = (function(){
         
                     activator.attachModels(page.appName);
                     page.isActivated = true;
-                });
+                })
             },
             activateNavigation: function(appName){
                 $("[data-navigate-to]", b.app(appName).container()).each(function (i, v) {

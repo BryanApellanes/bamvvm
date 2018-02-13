@@ -1,5 +1,5 @@
 /* bam application */
-(function ($, _, d, b, w) {
+(function ($, _, b, w) {
     "use strict";
     let TransitionHandler = require('./ctors/TransitionHandler'),
         Page = require('./ctors/Page')({bam: b, jQuery: $, lodash: _}),
@@ -274,23 +274,23 @@
         return spinner;
     };
 
-    b.activateApps = function () {
-        $("[data-app]").each(function (i, o) {
-            var appName = $(o).attr("data-app"),
-                startPage = $(o).attr("data-start") || "home",
-                app = b.app(appName);
+    // b.activateApps = function () {
+    //     $("[data-app]").each(function (i, o) {
+    //         var appName = $(o).attr("data-app"),
+    //             startPage = $(o).attr("data-start") || "home",
+    //             app = b.app(appName);
 
-            app.run(startPage);
-        });
-    };
+    //         app.run(startPage);
+    //     });
+    // };
 
-    $(document).ready(function () {
-        if (_ !== undefined && _.mixin !== undefined) {
-            _.mixin(b);
-        }
+    // $(document).ready(function () {
+    //     if (_ !== undefined && _.mixin !== undefined) {
+    //         _.mixin(b);
+    //     }
 
-        b.activateApps();
-    });
+    //     b.activateApps();
+    // });
     return app;
-})(jQuery, _, dao, bam, window || {});
+})(jQuery, _, bam, window || {});
 /* end application*/

@@ -14,7 +14,7 @@ var bam = function(appName){
 };
 bam.ctor = bam.ctor || {};
 
-module.exports = (function(){
+let bamInit = (function(bam){
     "use strict"
 
     return function(deps){
@@ -331,6 +331,10 @@ module.exports = (function(){
                 _.mixin(_bam);
             }        
         
+            _.extend(bam, _bam);
             return _bam;
     }
-})()
+})(bam)
+
+_.extend(bam, bamInit({jQuery: jQuery, lodash: _, window: window, forge: forge, dust: dust}));
+module.exports = bamInit;

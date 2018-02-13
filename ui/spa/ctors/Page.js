@@ -12,7 +12,8 @@ module.exports = (function(){
             TransitionHandler = require('./TransitionHandler'),
             ViewRenderer = require('./ViewRenderer')({jQuery: $, lodash: _}),
             activator = require('../components/Activator')({jQuery: $, lodash: _, bam: b}),
-            viewRenderer = new ViewRenderer();
+            randomString = require('../../../random-string'),
+            viewRenderer = new ViewRenderer();            
 
         return function Page(n, app) {
             var the = this;
@@ -59,7 +60,7 @@ module.exports = (function(){
         
             this.load = function () {
                 return $.ajax({
-                    url: b.getAppRoot() + "/" + the.name + ".html?nocache=" + b.randomString(4),
+                    url: window.location.protocol + "//" + window.location.host + "/" + the.name + ".html?nocache=" + randomString(4),
                     dataType: "html",
                     success: function (html) {
                         var p = document.createElement("iframe");
