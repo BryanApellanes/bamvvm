@@ -12,7 +12,7 @@ module.exports = (function(){
             TransitionHandler = require('./TransitionHandler'),
             ViewRenderer = require('./ViewRenderer')({jQuery: $, lodash: _}),
             activator = require('../components/Activator')({jQuery: $, lodash: _, bam: b}),
-            randomString = require('../../../random-string'),
+            randomString = require('../../../util/random-string'),
             viewRenderer = new ViewRenderer();            
 
         return function Page(n, app) {
