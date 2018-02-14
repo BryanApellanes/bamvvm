@@ -22,14 +22,22 @@ let bamInit = (function(bam){
             _dao = deps.dao,
             $ = deps.jQuery,
             _ = deps.lodash,
-            window = deps.window,
+            window = deps.window || {location:{protocol:'http', host: 'localhost'}},
             forge = deps.forge,
             dst = deps.dust;
         
             var appPath = "",
                 appRoot = "http://gloo-test.bamapps.net",
-                localAppRoot = appRoot,
-                proxyRoots = {},
+                localAppRoot = window.location.protocol + "//" + window.location.host + "/",
+                proxyInfos = {
+                    undefined: {
+                        protocol: 'http', 
+                        host: 'localhost', 
+                        port: 80, 
+                        apiPath: '', // the path to the root of the api.  Common examples include '/api', '/api/v1' etc.
+                        proxySource: '/serviceproxy/proxies.js'
+                    }
+                },
                 verb = "POST",
                 crossDomain = false,
                 dataTypes = {
@@ -150,22 +158,12 @@ let bamInit = (function(bam){
                 }
             };
         
-            _bam.proxyRoot = function(proxyName, root, path){                                
-                if (!_.isUndefined(proxyName) && proxyRoots[proxyName] && _.isUndefined(root)) {
-                    return  proxyRoots[proxyName];                    
-                } else {
-                    if(_.isUndefined(path)){
-                        path = appPath;
-                    }
-                    proxyRoots[proxyName] = {};
-                    proxyRoots[proxyName].appRoot = root;
-                    proxyRoots[proxyName].appPath = path;
-                    proxyRoots[proxyName].toString = function(){
-                        return this.appRoot + this.appPath;
-                    };
-
-                    return _bam.proxyRoot(proxyName);
+            _bam.proxy = function(className, endpointInfo){
+                if(!_.isUndefined(endpointInfo)){
+                    proxyInfos[className] = _.extend({}, proxyInfos["undefined"], endpointInfo);
                 }
+                
+                return _.extend({}, proxyInfos["undefined"], proxyInfos[className]);
             };
         
             /**
@@ -265,8 +263,8 @@ let bamInit = (function(bam){
                     a.push(args);
                     args = a;
                 }
-        
-                var root = _bam.proxyRoot(_bam[className].proxyName),
+                let proxyInfo = _bam.proxy(className),
+                    root = `${proxyInfo.protocol}//${proxyInfo.host}:${proxyInfo.port}/${proxyInfo.apiPath}`,
                     urlFormat = root + className + "/" + method + ".{0}?nocache=" + _bam.randomString(4) + "&",
                     config = getInvokeConfig(args, urlFormat, format);
         
@@ -297,16 +295,23 @@ let bamInit = (function(bam){
                 return path.replace(/\.[^/.]+$/, "");
             };
         
-            _bam.tools = function(){
-                return {
-                    bam: _bam,
-                    dao: _dao,
-                    jQuery: $,
-                    lodash: _,
-                    forge: forge,
-                    dust: dst,
-                    window: window
+            let tools = {
+                bam: _bam,
+                dao: _dao,
+                jQuery: $,
+                lodash: _,
+                forge: forge,
+                dust: dst,
+                window: window
+            };
+            _bam.tools = function(name, value){
+                if(!_.isUndefined(name) && !_.isUndefined(value)){
+                    tools[name] = value;
                 }
+                if(!_.isUndefined(name)){
+                    return tools[name];
+                }
+                return tools;
             }
 
             let cross = {                
@@ -335,6 +340,8 @@ let bamInit = (function(bam){
             return _bam;
     }
 })(bam)
-
-_.extend(bam, bamInit({jQuery: jQuery, lodash: _, window: window, forge: forge, dust: dust}));
+    
+try{   
+    _.extend(bam, bamInit({jQuery: jQuery, lodash: _, window: window, forge: forge, dust: dust}));
+}catch(e){}
 module.exports = bamInit;

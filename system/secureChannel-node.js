@@ -19,7 +19,7 @@ module.exports = (function(){
             secureChannelProxy = bam.secureChannelProxy;
 
         bam.secureInvoke = function(className, method, args, format, options){
-            if(!$.isArray(args)){
+            if(!_.isArray(args)){
                 var a = [];
                 a.push(args);
                 args = a;
@@ -63,7 +63,8 @@ module.exports = (function(){
             let promise = new Promise((resolve, reject)=> {
                 secureChannelClient.startSession()
                     .then(function(session){
-                        var root = bam.proxyRoot(className).toString(),
+                        var endpointInfo = bam.proxy(className),
+                            root = `${endpointInfo.protocol}//${endpointInfo.host}:${endpointInfo.port}/${endpointInfo.apiRoot}`,
                             url = root + "SecureChannel/Invoke.json?nocache=" + bam.randomString(4) + "&",
                             postData = getPostData(session),
                             validationToken = createValidationToken(session, postData.plain),
@@ -95,14 +96,6 @@ module.exports = (function(){
                                 reject(responseData.Message);
                             }
                         })
-                        // client.post("SecureChannel/Invoke.json?nocache=" + bam.randomString(4), postData.cipher, (err, res, responseData) => {
-                        //     if (responseData.Success) {
-                        //         let json = session.decrypt(responseData.Data);
-                        //         resolve(JSON.parse(json));
-                        //     } else {
-                        //         reject(responseData.Message);
-                        //     }
-                        // })
                 });
             });
             return promise;
