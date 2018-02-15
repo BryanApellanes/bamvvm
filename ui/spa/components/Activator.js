@@ -17,7 +17,7 @@ module.exports = (function(){
                     viewRenderer.renderViews(document, page.appName);
                     resolve();
                 }).then(()=>{
-                    //app.container().activate();
+                    app.container().activate();
         
                     activator.activateNavigation(page.appName);
         
