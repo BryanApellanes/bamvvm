@@ -314,6 +314,18 @@ let bamInit = (function(bam){
                 return tools;
             }
 
+            _bam.test = function(){
+                alert('monkey');
+            }
+
+            let renderers = {};
+            _bam.renderer = function(name, value){
+                if(value !== undefined){
+                    renderers[name] = value;
+                }
+                return renderers[name] || dust;
+            }
+
             let cross = {                
             }
             _bam.deps = function(name, val){
@@ -334,8 +346,7 @@ let bamInit = (function(bam){
         
             if(_ !== undefined && _.mixin !== undefined){
                 _.mixin(_bam);
-            }        
-        
+            };
             _.extend(bam, _bam);
             return _bam;
     }
