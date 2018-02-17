@@ -1,7 +1,9 @@
 /**
  * Created by bryan on 10/1/2015.
  */
-var observer = (function(){
+let _ = require('lodash');
+
+var observer = (function(_){
     "use strict";
 
     function value(n, v, own) {
@@ -41,7 +43,6 @@ var observer = (function(){
 
     function observeArray(a) {
         var result = [];
-        result.listeners = [];
         result.toData = function () {
             var dataArr = [];
             _.each(this, function (d) {
@@ -84,7 +85,6 @@ var observer = (function(){
             return observeArray(o);
         }
         var result = {};
-        result.listeners = [];
         result.properties = [];
         result.toData = function () {
             var l = this.properties.length,
@@ -124,18 +124,18 @@ var observer = (function(){
                 };
 
                 result.properties.push(prop);
-            }else{
+            } else {
                 result[prop] = o[prop];
             }
         }
-        result.change = function (pName, fn) {
-            if (_.isUndefined(fn) && _.isFunction(pName)) {
+        result.change = function (propName, fn) {
+            if (_.isUndefined(fn) && _.isFunction(propName)) {
                 for (var i = 0; i < result.properties.length; i++) {
                     var p = result.properties[i];
-                    result[p].value.change(p, pName); // pName is a function here
+                    result[p].value.change(p, propName); // pName is a function here
                 }
             } else {
-                result[pName].value.change(pName, fn);
+                result[propName].value.change(propName, fn);
             }
         };
         return result;
@@ -149,5 +149,7 @@ var observer = (function(){
 
     _.mixin(o);
     return o;
-})();
+})(_);
+
+module.exports = observer;
 
