@@ -314,10 +314,6 @@ let bamInit = (function(bam){
                 return tools;
             }
 
-            _bam.test = function(){
-                alert('monkey');
-            }
-
             let renderers = {};
             _bam.renderer = function(name, value){
                 if(value !== undefined){
@@ -326,8 +322,29 @@ let bamInit = (function(bam){
                 return renderers[name] || dust;
             }
 
-            let cross = {                
+            let modelResolvers = {};
+            /**
+             *  Set the resolver for the specified model or retrieve resolver previously set.
+             * @param {*} modelName 
+             * @param {*} resolver 
+             */
+            _bam.model = function(modelName, resolver) {
+                if(resolver){
+                    modelResolvers[modelName] = resolver;
+                }
+                return modelResolvers[modelName] || Promise.resolve({err: `model resolver not found: ${modelName}`});
             }
+
+            _bam.attributeOrRandom = function(element, attributeName){
+                let value = element.getAttribute(attributeName);
+                if(!value){
+                    element.setAttribute(attributeName, _bam.randomString(6));
+                    return _bam.attributeOrRandom(element, attributeName);
+                }
+                return value;
+            }
+
+            let cross = {}
             _bam.deps = function(name, val){
                 cross[name] = val;
                 return cross[name];

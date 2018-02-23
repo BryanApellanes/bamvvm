@@ -147,13 +147,13 @@
                 pageActivated: function (pageName, handler) {
                     if (_.isFunction(pageName) && _.isUndefined(handler)) {
                         this.anyPageActivationHandlers.push(pageName); // its a function
-                    }else if(_.isFunction(this.pageActivationHandlers[pageName])){
+                    } else if (_.isFunction(this.pageActivationHandlers[pageName])) {
                         var tmp = [this.pageActivationHandlers[pageName]];
                         tmp.push(handler);
                         this.pageActivationHandlers[pageName] = tmp;
-                    }else if(_.isArray(this.anyPageActivationHandlers[pageName])){
+                    } else if (_.isArray(this.anyPageActivationHandlers[pageName])) {
                         this.pageActivationHandlers[pageName].push(handler);
-                    }else{
+                    } else {
                         this.pageActivationHandlers[pageName] = handler;
                     }
 

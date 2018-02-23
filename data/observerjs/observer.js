@@ -1,8 +1,3 @@
-/**
- * Created by bryan on 10/1/2015.
- */
-let _ = require('lodash');
-
 var observer = (function(_){
     "use strict";
 
@@ -152,4 +147,3 @@ var observer = (function(_){
 })(_);
 
 module.exports = observer;
-
