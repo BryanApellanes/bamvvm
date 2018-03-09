@@ -26,6 +26,7 @@ let BamElement = (function(){
                 shadowRoot: this.attachShadow({mode: 'open'})
             }
             this.props = data;
+            this.props.trace = console.log;
         }
 
         get props(){
@@ -42,6 +43,10 @@ let BamElement = (function(){
                 return this.Id;
             }
             return id;
+        }
+
+        trace(msg) {
+            this.props.trace(msg);
         }
     }
 

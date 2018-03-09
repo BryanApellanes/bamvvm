@@ -5,22 +5,21 @@
 let BamElement = require('./bam-element');
 let BamModel = (function(){    
     let parseData = {
-        json: (el) => JSON.parse(el.innerText),
+        json: (el) => JSON.parse(el.props.content),
         javascript: (el) => {
             return eval(el.innerText);
-        },
-        gloo: (el) => {
-
         }
     }
 
     class BamModel extends BamElement {
         constructor() {
             super(); // always call super() fist in the ctor.
+            this.props.content = this.innerHTML;
+            this.props.bam.model(this.id, this.data);
         }
 
-        connectedCallback() {
-            this.props.bam.model(this.id, this.data);
+        connectedCallback() {            
+            
         }
 
         disconnectedCallback() {
@@ -33,16 +32,16 @@ let BamModel = (function(){
 
         get data(){
             return new Promise((resolve, reject) => {                
-                if(!parseData[this.format]){
-                    resolve({err: "Couldn't resolve format"});
+                if(!parseData[this.type]){
+                    resolve({err: "Couldn't resolve model type"});
                 } else {
-                    resolve(parseData[this.format](this));
+                    resolve(parseData[this.type](this));
                 }
             })
         }
 
-        get format(){
-            return this.getAttribute("format") || "json";
+        get type(){
+            return this.getAttribute("type") || "json";
         }
     }
 

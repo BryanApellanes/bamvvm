@@ -44,7 +44,7 @@
                 goodByeEffect: "fade",
                 helloEffect: "fade",
                 attachModels: function(){
-                    attachModels(appName);
+                    activator.attachModels(appName);
                 },
                 page: function(pageName){
                     if(_.isUndefined(pageName)){
