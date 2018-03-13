@@ -215,3 +215,4 @@ var sdo = (function ($, _) {
     return sdo;
 })(jQuery, _);
 /* end sdo */
+module.exports = sdo;

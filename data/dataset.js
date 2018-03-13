@@ -459,3 +459,5 @@ var dataset = {log: function(msg){}};
     })
 })(dataset, jQuery);
 /* end dataset*/
+
+module.exports = dataset;

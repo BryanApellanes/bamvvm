@@ -10,7 +10,7 @@
  *
  */
 
-var dbs = (function($, _, b, d, w){
+var schemafier = (function($, _, b, d, w){
     var dataTypes = {
         Boolean: true,
         Int: 2147483647,
@@ -204,3 +204,4 @@ var dbs = (function($, _, b, d, w){
     }
 })(jQuery, _, bam, dao, window || {});
 
+module.exports = schemafier;

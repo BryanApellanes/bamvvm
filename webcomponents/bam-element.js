@@ -1,22 +1,20 @@
 /**
- * Replace BamTemplate with your custom class name
- * Replace bam-template with your custom element tag
+ * bam-element.js
  */
-let BamElement = (function(){  
-    let baseInstanceData = {
+let BamElement = (function(bam){  
+    let baseProps = {
         bam: bam,
-        undefined: {},
         shadowRoot: null,
-        props: {},
         template: null
     },
-    instanceData = {};
+    instanceProps = {},
+    instanceEventHandlers = {};
 
-    function props(viewId, data){
+    function props(elementId, data){
         if(data){
-            instanceData[viewId] = _.extend({}, baseInstanceData, data);
+            instanceProps[elementId] = _.extend({}, baseProps, data);
         }
-        return instanceData[viewId];
+        return instanceProps[elementId];
     }
 
     class BamElement extends HTMLElement {
@@ -27,6 +25,12 @@ let BamElement = (function(){
             }
             this.props = data;
             this.props.trace = console.log;
+            this.props.bam.element(this.Id, this);
+            this.props.content = this.innerHTML;
+        }
+
+        get bam(){
+            return this.props.bam;
         }
 
         get props(){
@@ -45,12 +49,20 @@ let BamElement = (function(){
             return id;
         }
 
+        trigger(eventName, data){
+            this.dispatchEvent(new CustomEvent(eventName, {detail: data}));
+        }
+
+        on(eventName, fn){
+            this.addEventListener(eventName, fn);
+        }
+
         trace(msg) {
             this.props.trace(msg);
         }
     }
 
     return BamElement;
-})()
+})(bam)
 
 module.exports = BamElement;

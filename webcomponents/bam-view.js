@@ -1,3 +1,7 @@
+/**
+ * bam-view.js
+ */
+
 let BamElement = require("./bam-element");
 
 let BamView = (function(){
@@ -9,7 +13,12 @@ let BamView = (function(){
 
         connectedCallback() {            
             this.resolveModel().then(model => {
-                this.render(model);
+                let renderAttributeValue = this.getAttribute("render");
+                if(!renderAttributeValue || renderAttributeValue != 'false'){                    
+                    this.render(model);
+                } else {
+                    this.trace(`${this.Id}.render = ${renderAttributeValue}.  Will not render.`);
+                }
             })
         }
     
@@ -24,6 +33,7 @@ let BamView = (function(){
         render(model) { 
             let shadowRoot = this.props.shadowRoot;    
             let renderer = this.renderer;
+            let evtArgs = {model: model, view: this};
 
             function _render(err, result) {
                 if(err) {
@@ -37,9 +47,11 @@ let BamView = (function(){
             if (model.err) {
                 shadowRoot.innerHTML = `<h2>${model.err}</h2>`;
             } else {                
-                if (this.view) {    
+                if (this.view) {                    
+                    this.trigger('rendering', evtArgs);
                     // if a view attribute is specified it should be the name of a template                         
                     renderer.render(this.view, model, _render);
+                    this.trigger('rendered', evtArgs);
                 } else if (this.props.template){
                     let templateSrc = this.props.template,
                         item = model;
@@ -47,7 +59,9 @@ let BamView = (function(){
                         templateSrc = `{#items}${templateSrc}{/items}`;
                         item = { items: model };
                     } 
+                    this.trigger('rendering', evtArgs);
                     renderer.renderSource(templateSrc, item, _render);
+                    this.trigger('rendered', evtArgs);
                 } else {
                     shadowRoot.innerHTML = "<h2>No template content or view attribute specified</h2>";
                 }
@@ -58,8 +72,11 @@ let BamView = (function(){
             if(!this.props.model) {                
                 this.props.model = new Promise((resolve, reject) => {
                     let modelName = this.getAttribute("model") || "default";
-                    this.trace(`resolving model for: Id=${this.Id}, modelName=${modelName}`);
-                    bam.model(modelName).then(model=> resolve(model));
+                    this.trace(`view: resolving model, Id=${this.Id}, model=${modelName}`);
+                    bam.model(modelName).then(model=> {
+                        resolve(model);
+                        this.trigger('modelResolved', model);
+                    });
                 })     
             }
             return this.props.model;                   
@@ -93,3 +110,4 @@ let BamView = (function(){
     customElements.define('bam-view', BamView);  
     return BamView;
 })()
+module.exports = BamView;

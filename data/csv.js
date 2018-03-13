@@ -21,18 +21,18 @@ var csv = (function ($, _) {
         return s;
     }
 
-    function csv(a, h) { // object[] array, boolean h => headers
+    function csv(arr, hasHeaders) { // object[] array, boolean h = headers
         var def = $.Deferred(function () {
             var prom = this,
                 result = "",
                 properties = [];
             
-            if (!_.isArray(a)) {
+            if (!_.isArray(arr)) {
                 throw { message: "The specified value must be an array" };
             }
-            if (h) { // headers
+            if (hasHeaders) { // headers
                 var first = true;
-                for (var p in a[0]) {
+                for (var p in arr[0]) {
                     if (!first) {
                         result += ",";
                     }
@@ -44,7 +44,7 @@ var csv = (function ($, _) {
                 result += "\r\n";                
             }
 
-            _.each(a, function (o) {
+            _.each(arr, function (o) {
                 var first = true;                
                 _.each(properties, function(p){  
                     var val = o[p],
@@ -93,3 +93,5 @@ var csv = (function ($, _) {
 
     return result;
 })(jQuery, _);
+
+module.exports = csv;

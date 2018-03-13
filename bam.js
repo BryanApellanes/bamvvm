@@ -322,6 +322,14 @@ let bamInit = (function(bam){
                 return renderers[name] || dust;
             }
 
+            let elements = {};
+            _bam.element = function(id, value){
+                if(value !== undefined){
+                    elements[id] = value;
+                }
+                return elements[id];
+            }
+            
             let modelResolvers = {};
             /**
              *  Set the resolver for the specified model or retrieve resolver previously set.
@@ -342,6 +350,29 @@ let bamInit = (function(bam){
                     return _bam.attributeOrRandom(element, attributeName);
                 }
                 return value;
+            }
+
+            _bam.getFunction = function(name, context){
+                if(_.isUndefined(name)){
+                    return null;
+                }
+                if (context === null || context === undefined) {
+                    context = window;
+                }
+                var namespaces = name.toString().split("."),
+                    func = namespaces.pop();
+                for (var i = 0; i < namespaces.length; i++) {
+                    if(_.isUndefined(context) || _.isNull(context)){
+                        break;
+                    }
+                    context = context[namespaces[i]];
+                }
+        
+                if (context !== null && context !== undefined) {
+                    return context[func];
+                }
+        
+                return null;               
             }
 
             let cross = {}

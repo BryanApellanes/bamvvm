@@ -12,7 +12,7 @@ let dataSources = (function(bam, dao, _, win){
                     if(!_.isFunction(loaderPromise.then)){
                         reject(new Error(`Loader for ${sourceName} did not return a promise`));
                     }
-                    loader(sourceName)
+                    loaderPromise
                         .then(data => resolve(data))
                         .catch(e=> reject(e));
                 })
