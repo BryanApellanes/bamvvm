@@ -2,9 +2,9 @@
 BAM application model, view, view-model framework
 
 # Models
-All models in BAMvvm are plain and simply JavaScript objects.  They may be observed by using observer.observe (see [observer.js](https://github.com/BryanApellanes/bamvvm/blob/master/data/observer.js))
+All models in BAMvvm are plain and simply JavaScript objects.  They may be observed by using observer.observe
  which will return an observable object if an object is specified or an observable collection if an array
- is specified; see observer
+ is specified; see [observer.js](https://github.com/BryanApellanes/bamvvm/blob/master/data/observer.js)
 
 # Views
 Views in BAMvvm are html files or dust templates.  Html has always been the language used to express views
