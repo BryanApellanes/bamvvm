@@ -2,7 +2,7 @@
 BAM application model, view, view-model framework
 
 # Models
-All models in BAMvvm are plain and simply JavaScript objects.  They may be observed by using observer.observe
+All models in BAMvvm are plain and simply JavaScript objects.  They may be observed by using observer.observe (see [observer.js](https://github.com/BryanApellanes/bamvvm/blob/master/data/observer.js))
  which will return an observable object if an object is specified or an observable collection if an array
  is specified; see observer
 
@@ -33,6 +33,6 @@ Used to specify an action on a viewModel to execute on click or the event specif
 ## data-action-on
 Used to specify the event an action should be executed in response to, used in conjunction with data-action
 
-# Observer (observer.js)
+# Observer ([observer.js](https://github.com/BryanApellanes/bamvvm/blob/master/data/observer.js))
 Used to observe an object or collection.  The result of calling observer.observe can be likened to instantiating
 a backbone model or collection only the resulting object won't suck.
